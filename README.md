@@ -22,7 +22,7 @@ Hands-on lab for understanding how network traffics seen on packet level, how Su
       +------------------+------------------+
       |                  |                  |
     Kali              Windows 11        DHCP Server
- (attacker/sensor)     (victim)
+ (attacker)           (victim)
  192.168.56.103     192.168.56.104     192.168.56.100
       |
       |  traffic on eth0
