@@ -14,7 +14,7 @@ Hands-on lab for understanding how network traffics seen on packet level, how Su
 - Developing an investigator mindset: *Who? What? When? How?* before drawing conclusions.
 
 
-## Topologi Lab
+## Lab Topology
 
 ```
             Host-Only Network (192.168.56.0/24)
