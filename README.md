@@ -129,6 +129,6 @@ sudo nmcli connection up "<NAMA_CONNECTION>"
 ```
 
 Wireshark filters Used: `icmp`, `tcp && ip.addr == 192.168.56.104`, `tcp.port == <port>`, `dhcp` / `bootp`.
-## Skill yang Dilatih
+## Skills
 
 `Packet analysis` · `TCP/IP fundamentals` · `Network scanning (Nmap)` · `IDS (Suricata)` · `Log analysis (eve.json)` · `Alert triage & correlation`
