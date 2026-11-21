@@ -58,20 +58,29 @@ Kali also has `eth1` (NAT, `10.0.3.15/24`), but all analysis focuses on `eth0`.
 - Capture `ping` requests from Kali to Windows using `tcpdump` and Wireshark (filter `icmp`): 4 Echo Requests + 4 Echo Replies (ICMP Type 8 / Code 0, sequence number increases).
 - Understand the relationship between IP, ARP, MAC, and Ethernet frames (ARP may not appear if the MAC is already in the neighbor cache).
 
+![tcpdump capturing ARP and ICMP traffic](images/baseline-tcpdump.png)
+
 ### 2. Nmap Scanning
 - `nmap -sT 192.168.56.104` initially returned *“Host seems down”* even though `ping` succeeded, because Nmap’s host discovery failed. The solution is to use `-Pn` (skip host discovery): `nmap -Pn -sT 192.168.56.104`.
 - In Wireshark, it’s visible that Kali is sending **TCP SYN** packets to many different ports on Windows.
 - There are no `SYN, ACK` (open) or `RST, ACK` (closed) responses. Conclusion: it’s highly likely that **Windows Firewall is dropping the packets**, so Kali receives no response at all.
+
+![Nmap scan command and output](images/nmap-scan.png)
 
 ### 3. Suricata as an IDS
 - Installation, rule updates (`suricata-update`), configuration validation (`suricata -T`), and running Suricata on `eth0`.
 - Generated logs: `eve.json`, `fast.log`, `stats.log`, `suricata.log`.
 - Nmap traffic **is recorded as a flow** in `eve.json` (`syn: true`, `state: syn_sent`, `pkts_toclient: 0`, `alerted: false`), but **does not generate an alert**. The active ruleset does not have a port scan signature that matches this pattern.
 
+![Suricata running on eth0](images/suricata-running.png)
+
 ### 4. Alert Investigation: Kali Hostname in DHCP
 - The only alert that appeared: `ET INFO Possible Kali Linux hostname in DHCP Request Packet` (SID `2022973`, `192.168.56.103:68 -> 192.168.56.100:67`, action `allowed`).
 - Correlated with Wireshark: The DHCP Request carries Option 12 *Host Name* = `kali`, which triggered the signature.
 - Analyzed a single DHCP conversation (Discover → Offer → Request → ACK) and correlated the Request with the ACK using the **Transaction ID**, **Client MAC**, and **Client IP**.
+
+![fast.log showing the DHCP hostname alert](images/fast-log-alert.png)
+![Wireshark DHCP Request expanded to Option 12 Host Name](images/dhcp-hostname-option12.png)
 
 ---
 
